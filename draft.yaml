@@ -1,0 +1,49 @@
+models:
+  Product:
+    name: string:200
+    barcode: string:200
+    ingridients: text
+    allergens: text
+    image: string
+    status: enum:haram,no-contamination,halal
+    relationships:
+      belongsTo: Company
+  Company:
+    name: string:200
+    relationships:
+      hasMany: Product
+  Restaurant:
+    name: string:200
+    address: string:200
+    city: string:200
+    country: string:200
+    latitude: float
+    longitude: float
+    status: enum:open,closed
+    website: string
+    relationships:
+      hasMany: Menu
+  Menu:
+    name: string:200
+    description: text
+    image: string
+    status: enum:active,inactive
+    ingridients: text
+    relationships:
+      belongsTo: Restaurant
+  Recipe:
+    name: string:200
+    description: text
+    image: string
+    status: enum:active,inactive
+    video: string
+    ingridients: text
+    allergens: text
+    relationships:
+      hasMany: Step
+  Step:
+    description: text
+    image: string
+    relationships:
+      belongsTo: Recipe
+seeders: Product, Company, Restaurant, Menu, Recipe, Step

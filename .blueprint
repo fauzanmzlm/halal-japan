@@ -1,0 +1,34 @@
+created:
+    - database/factories/ProductFactory.php
+    - database/factories/CompanyFactory.php
+    - database/factories/RestaurantFactory.php
+    - database/factories/MenuFactory.php
+    - database/factories/RecipeFactory.php
+    - database/factories/StepFactory.php
+    - database/migrations/2025_06_30_071117_create_products_table.php
+    - database/migrations/2025_06_30_071118_create_companies_table.php
+    - database/migrations/2025_06_30_071119_create_restaurants_table.php
+    - database/migrations/2025_06_30_071120_create_menus_table.php
+    - database/migrations/2025_06_30_071121_create_recipes_table.php
+    - database/migrations/2025_06_30_071122_create_steps_table.php
+    - app/Models/Product.php
+    - app/Models/Company.php
+    - app/Models/Restaurant.php
+    - app/Models/Menu.php
+    - app/Models/Recipe.php
+    - app/Models/Step.php
+    - database/seeders/ProductSeeder.php
+    - database/seeders/CompanySeeder.php
+    - database/seeders/RestaurantSeeder.php
+    - database/seeders/MenuSeeder.php
+    - database/seeders/RecipeSeeder.php
+    - database/seeders/StepSeeder.php
+models:
+    User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: string, remember_token: 'string:100 nullable' }
+    Product: { name: 'string:200', barcode: 'string:200', ingridients: text, allergens: text, image: string, status: 'enum:haram,no-contamination,halal', relationships: { belongsTo: Company } }
+    Restaurant: { name: 'string:200', address: 'string:200', city: 'string:200', country: 'string:200', latitude: float, longitude: float, status: 'enum:open,closed', website: string, relationships: { hasMany: Menu } }
+    Menu: { name: 'string:200', description: text, image: string, status: 'enum:active,inactive', ingridients: text, relationships: { belongsTo: Restaurant } }
+    Recipe: { name: 'string:200', description: text, image: string, status: 'enum:active,inactive', video: string, ingridients: text, allergens: text, relationships: { hasMany: Step } }
+    Step: { description: text, image: string, relationships: { belongsTo: Recipe } }
+    Commpany: { name: 'string:200', relationships: { hasMany: Product } }
+    Company: { name: 'string:200', relationships: { hasMany: Product } }
