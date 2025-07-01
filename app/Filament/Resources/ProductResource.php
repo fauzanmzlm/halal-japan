@@ -6,6 +6,9 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -20,30 +23,52 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('barcode')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\Textarea::make('ingridients')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('allergens')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->required(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\Select::make('company_id')
-                    ->relationship('company', 'name')
-                    ->required(),
+                Section::make('Product Image & Barcode')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(200),
+                        Forms\Components\TextInput::make('barcode')
+                            ->required()
+                            ->maxLength(200),
+                        Select::make('status')
+                            ->searchable()
+                            ->options([
+                                'no-contamination' => 'No Contamination',
+                                'halal' => 'Halal',
+                                'haram' => 'Haram',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('company_id')
+                            ->searchable()
+                            ->preload()
+                            ->relationship('company', 'name')
+                            ->required(),
+                        Forms\Components\FileUpload::make('image')
+                            ->image()
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Product Details')
+                    ->columns(1)
+                    ->schema([
+                        RichEditor::make('ingridients')
+                            ->required()
+                            ->columnSpanFull(),
+                        RichEditor::make('allergens')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+
+
+
             ]);
     }
 
