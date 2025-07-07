@@ -22,13 +22,13 @@ class RestaurantFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'address' => fake()->regexify('[A-Za-z0-9]{200}'),
+            'address' => fake()->streetAddress(),
             'city' => fake()->city(),
             'country' => fake()->country(),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
             'status' => fake()->randomElement(["open","closed"]),
-            'website' => fake()->word(),
+            'website' => fake()->domainName(),
         ];
     }
 }
