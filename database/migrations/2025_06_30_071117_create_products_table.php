@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('allergens');
             $table->string('image');
             $table->enum('status', ["haram","no-contamination","halal"]);
-            $table->foreignId('company_id');
+            $table->foreignId('company_id')->constrained();
             $table->timestamps();
         });
     }
