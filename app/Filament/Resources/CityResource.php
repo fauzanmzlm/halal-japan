@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CityResource\Pages;
 use App\Filament\Resources\CityResource\RelationManagers;
 use App\Models\City;
+use App\Models\Country;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -20,6 +21,10 @@ class CityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Country and Cities';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -30,9 +35,11 @@ class CityResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(200),
-                        Forms\Components\TextInput::make('country_id')
-                            ->required()
-                            ->numeric(),
+                        Forms\Components\Select::make('country_id')
+                        ->label('Country')
+                            ->searchable()
+                            ->options(Country::pluck('name', 'id'))
+                            ->required(),
                     ]),
             ]);
     }
@@ -43,7 +50,7 @@ class CityResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('country_id')
+                Tables\Columns\TextColumn::make('country.name')
                     ->numeric()
                     ->sortable(),
             ])
