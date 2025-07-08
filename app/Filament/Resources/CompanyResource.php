@@ -61,6 +61,8 @@ class CompanyResource extends Resource
                                     ->send();
                             }
 
+                            $record->delete();
+
                             return Notification::make()
                                 ->title('Company deleted')
                                 ->body("The company '{$record->name}' has been deleted successfully.")

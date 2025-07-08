@@ -17,7 +17,7 @@ class RestaurantResource extends Resource
 {
     protected static ?string $model = Restaurant::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
     protected static ?int $navigationSort = 3;
 
