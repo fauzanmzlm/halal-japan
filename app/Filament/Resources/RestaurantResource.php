@@ -31,10 +31,10 @@ class RestaurantResource extends Resource
                 Forms\Components\TextInput::make('address')
                     ->required()
                     ->maxLength(200),
-                Forms\Components\TextInput::make('city')
+                Forms\Components\TextInput::make('country')
                     ->required()
                     ->maxLength(200),
-                Forms\Components\TextInput::make('country')
+                Forms\Components\TextInput::make('city')
                     ->required()
                     ->maxLength(200),
                 Forms\Components\TextInput::make('latitude')
@@ -59,7 +59,7 @@ class RestaurantResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('address')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('city')
+                Tables\Columns\TextColumn::make('city.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable()

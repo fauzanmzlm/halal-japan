@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\City;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Restaurant;
@@ -23,11 +24,10 @@ class RestaurantFactory extends Factory
         return [
             'name' => fake()->name(),
             'address' => fake()->streetAddress(),
-            'city' => fake()->city(),
-            'country' => fake()->country(),
+            'city_id' => City::factory(),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
-            'status' => fake()->randomElement(["open","closed"]),
+            'status' => fake()->randomElement(["open", "closed"]),
             'website' => fake()->domainName(),
         ];
     }
