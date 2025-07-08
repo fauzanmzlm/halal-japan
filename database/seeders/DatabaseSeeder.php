@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             RecipeSeeder::class,
             StepSeeder::class,
+            CountrySeeder::class,
+            CitySeeder::class,
         ]);
     }
 }
