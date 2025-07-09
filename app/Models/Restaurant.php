@@ -18,10 +18,8 @@ class Restaurant extends Model
     protected $fillable = [
         'name',
         'address',
-        'city',
-        'country',
-        'latitude',
-        'longitude',
+        'city_id',
+        'location',
         'status',
         'website',
     ];
@@ -35,8 +33,7 @@ class Restaurant extends Model
     {
         return [
             'id' => 'integer',
-            'latitude' => 'float',
-            'longitude' => 'float',
+            'location' => 'json',
         ];
     }
 

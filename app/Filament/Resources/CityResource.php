@@ -9,6 +9,7 @@ use App\Models\Country;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -36,7 +37,7 @@ class CityResource extends Resource
                             ->required()
                             ->maxLength(200),
                         Forms\Components\Select::make('country_id')
-                        ->label('Country')
+                            ->label('Country')
                             ->searchable()
                             ->options(Country::pluck('name', 'id'))
                             ->required(),
@@ -61,6 +62,23 @@ class CityResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->requiresConfirmation()
+                    ->action(function (City $record) {
+                        if ($record->restaurants()->exists()) {
+                            return Notification::make()
+                                ->title('Cannot delete city')
+                                ->body('This city has associated restaurants and cannot be deleted.')
+                                ->danger()
+                                ->send();
+                        }
+
+                        $record->delete();
+
+                        return Notification::make()
+                            ->title('City deleted')
+                            ->body('The city has been successfully deleted.')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

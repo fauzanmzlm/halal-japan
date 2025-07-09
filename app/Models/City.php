@@ -16,4 +16,9 @@ class City extends Model
     {
         return $this->belongsTo(Country::class);
     }
+
+    public function restaurants()
+    {
+        return $this->hasMany(Restaurant::class);
+    }
 }

@@ -25,8 +25,10 @@ class RestaurantFactory extends Factory
             'name' => fake()->name(),
             'address' => fake()->streetAddress(),
             'city_id' => City::factory(),
-            'latitude' => fake()->latitude(),
-            'longitude' => fake()->longitude(),
+            'location' => json_encode([
+                'lat' => fake()->latitude(),
+                'lng' => fake()->longitude(),
+            ]),
             'status' => fake()->randomElement(["open", "closed"]),
             'website' => fake()->domainName(),
         ];

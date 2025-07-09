@@ -15,4 +15,11 @@ class CreateRestaurant extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+
+        $data['location'] = json_encode($data['location']);
+        return $data;
+    }
 }

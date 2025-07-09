@@ -4,9 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RestaurantResource\Pages;
 use App\Filament\Resources\RestaurantResource\RelationManagers;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\Restaurant;
+use ArberMustafa\FilamentLocationPickrField\Forms\Components\LocationPickr;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,29 +31,67 @@ class RestaurantResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('address')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('country')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('city')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('latitude')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('longitude')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('website')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Restaurant Information')
+                    ->columns(1)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(200),
+                        Forms\Components\TextInput::make('address')
+                            ->required()
+                            ->maxLength(200),
+                        Forms\Components\Select::make('country_id')
+                            ->label('Country')
+                            ->options(Country::pluck('name', 'id'))
+                            ->searchable()
+                            ->required()
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('city_id', null);
+                            }),
+                        Forms\Components\Select::make('city_id')
+                            ->label('City')
+                            ->options(
+                                function (?Restaurant $record, Get $get, Set $set) {
+                                    if (!empty($record) && empty($get('country_id'))) {
+                                        $set('country_id', $record->city->country_id);
+                                        $set('city_id', $record->city_id);
+                                    }
+
+                                    return City::where('country_id', $get('country_id'))
+                                        ->pluck('name', 'id');
+                                }
+                            )
+                            ->searchable()
+                            ->required(),
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'open' => 'Open',
+                                'closed' => 'Closed',
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('website')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
+                Section::make('Location')
+                    ->columns(1)
+                    ->schema([
+                        LocationPickr::make('location')
+                            ->mapControls([
+                                'mapTypeControl'    => true,
+                                'scaleControl'      => true,
+                                'streetViewControl' => true,
+                                'rotateControl'     => true,
+                                'fullscreenControl' => true,
+                                'zoomControl'       => false,
+                            ])
+                            ->defaultZoom(5)
+                            ->draggable()
+                            ->clickable()
+                            ->height('40vh')
+                            ->defaultLocation([41.32836109345274, 19.818383186960773])
+                            ->myLocationButtonLabel('My location'),
+                    ]),
             ]);
     }
 
@@ -58,7 +102,8 @@ class RestaurantResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('city.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
