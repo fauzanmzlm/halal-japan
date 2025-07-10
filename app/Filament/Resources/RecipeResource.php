@@ -6,6 +6,7 @@ use App\Filament\Resources\RecipeResource\Pages;
 use App\Filament\Resources\RecipeResource\RelationManagers;
 use App\Models\Recipe;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -17,32 +18,65 @@ class RecipeResource extends Resource
 {
     protected static ?string $model = Recipe::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-bookmark';
+
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->required(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('video')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('ingridients')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('allergens')
-                    ->required()
-                    ->columnSpanFull(),
+                Section::make('Recipe Information')
+                    ->columns(1)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(200),
+                        Forms\Components\TextInput::make('video')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Radio::make('status')
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->options([
+                                'active' => 'Active',
+                                'inactive' => 'Inactive',
+                            ])
+                            ->required(),
+                        Forms\Components\FileUpload::make('image')
+                            ->image()
+                            ->required(),
+
+                    ]),
+
+                Section::make('Recipe Detail')
+                    ->columns(1)
+                    ->schema([
+                        Forms\Components\RichEditor::make('description')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\RichEditor::make('ingridients')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\RichEditor::make('allergens')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Recipe Steps')
+                    ->columns(1)
+                    ->schema([
+                        Forms\Components\Repeater::make('steps')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\RichEditor::make('description')
+                                    ->required()
+                                    ->columnSpanFull(),
+                                Forms\Components\FileUpload::make('image')
+                                    ->image()
+                                    ->columnSpanFull(),
+                            ]),
+                    ])
             ]);
     }
 
@@ -53,24 +87,21 @@ class RecipeResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('video')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                    }),
+                Tables\Columns\TextColumn::make('steps_count')->counts('steps')
+                    ->label('Steps'),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

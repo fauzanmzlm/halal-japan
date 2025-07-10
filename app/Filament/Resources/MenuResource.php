@@ -39,7 +39,7 @@ class MenuResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(200),
-                        Forms\Components\Checkbox::make('status')
+                        Forms\Components\Radio::make('status')
                             ->inline()
                             ->inlineLabel(false)
                             ->options([
@@ -74,7 +74,8 @@ class MenuResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('status')->badge()
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'active' => 'success',
                         'inactive' => 'danger',
@@ -89,9 +90,9 @@ class MenuResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                ->requiresConfirmation()
-                ->action(function (Menu $record) {
-                     // delete image from storage
+                    ->requiresConfirmation()
+                    ->action(function (Menu $record) {
+                        // delete image from storage
                         if (Storage::disk('public')->exists($record->image)) {
                             Storage::disk('public')->delete($record->image);
                         }
@@ -102,7 +103,7 @@ class MenuResource extends Resource
                             ->title('Menu deleted successfully')
                             ->success()
                             ->send();
-                }),
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
